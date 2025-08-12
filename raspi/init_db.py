@@ -10,6 +10,9 @@ with sqlite3.connect("sensor_data.db", isolation_level=None) as con:
             ambient REAL NOT NULL,
             source REAL NOT NULL,
             hot REAL NOT NULL,
-            flow REAL NOT NULL
+            flow REAL NOT NULL,
+            solar_pv_array_power REAL NOT NULL,
+            preheat_tank_power REAL NOT NULL,
+            hybrid_hot_water_tank_power REAL NOT NULL
         ) STRICT
     """)

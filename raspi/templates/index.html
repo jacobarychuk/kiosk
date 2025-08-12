@@ -33,8 +33,8 @@
             Flows
           </label>
 
-          <input type="radio" id="energy-tab" name="tab">
-          <label for="energy-tab" class="tab-label">
+          <input type="radio" id="power-tab" name="tab">
+          <label for="power-tab" class="tab-label">
             Power
           </label>
         </div>
@@ -455,6 +455,16 @@
                   Tank
                 </text>
                 <text
+                  x="76.25"
+                  y="70"
+                  font-size="3px"
+                  font-family="Verdana"
+                  text-anchor="middle"
+                  id="preheat-tank-power-label"
+                >
+                  <tspan id="preheat-tank-power-value">--</tspan> kW
+                </text>
+                <text
                   x="106"
                   y="77.5"
                   font-size="3px"
@@ -475,6 +485,16 @@
                   Water Tank
                 </text>
                 <text
+                  x="127"
+                  y="77.5"
+                  font-size="3px"
+                  font-family="Verdana"
+                  text-anchor="middle"
+                  id="hybrid-hot-water-tank-power-label"
+                >
+                  <tspan id="hybrid-hot-water-tank-power-value">--</tspan> kW
+                </text>
+                <text
                   x="23"
                   y="119.5"
                   font-size="3px"
@@ -483,6 +503,16 @@
                   id="solar-pv-array-label"
                 >
                   Solar PV Array
+                </text>
+                <text
+                  x="60"
+                  y="108.5"
+                  font-size="3px"
+                  font-family="Verdana"
+                  text-anchor="middle"
+                  id="solar-pv-array-power-label"
+                >
+                  <tspan id="solar-pv-array-power-value">--</tspan> kW
                 </text>
               </g>
 
@@ -1299,8 +1329,20 @@
           <div id="chart-flow-history"></div>
         </section>
 
-        <section class="tab-panel" id="energy-panel">
+        <section class="tab-panel" id="power-panel">
           <h2>Power Monitoring</h2>
+          <div style="text-align: center;">
+            <div class="live-badge">
+              <span class="dot"></span>
+              LIVE
+            </div>
+          </div>
+          <div class="live-data">
+            <span>Solar PV Array: <span id="live-solar-pv-array-power">--</span> kW</span>
+            <span>Hybrid Hot Water Tank: <span id="live-hybrid-hot-water-tank-power">--</span> kW</span>
+            <span>Hybrid Hot Water Tank: <span id="live-preheat-tank-power">--</span> kW</span>
+          </div>
+          <div id="chart-power-history"></div>
         </section>
       </div>
     </main>
@@ -1326,5 +1368,6 @@
     </script>
     <script src="/static/temperature.js"></script>
     <script src="/static/flow.js"></script>
+    <script src="/static/power.js"></script>
   </body>
 </html>

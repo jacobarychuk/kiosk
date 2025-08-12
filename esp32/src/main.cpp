@@ -23,6 +23,16 @@ const String sensorNames[NUM_SENSORS] = {
   "hot"
 };
 
+// CT sensor data wire is connected to GPIO 34
+#define CT_SENSOR 34
+#define ADC_OFFSET 115
+#define MAX_ADC_VALUE 4095 // Maximum value for 12-bit resolution
+#define REFERENCE_VOLTAGE 3.3
+#define MAINS_VOLTAGE 120
+#define TRANSFORMATION_RATIO 15
+#define DC_OFFSET 2048
+#define VOLTAGE_OFFSET 40
+
 // Water flow sensor data wire is connected to GPIO 13
 #define WATER_FLOW_SENSOR_DATA 13
 
@@ -76,6 +86,51 @@ void setup() {
 }
 
 void loop() {
+  // Sample the AC signal for approximately one second
+  int peakValue = 0;
+  int troughValue = 4095;
+  for (int i = 0; i < 1000; i++) {
+    int value = analogRead(CT_SENSOR);
+
+    int adjustedValue = value + ADC_OFFSET;
+    Serial.print("ADC Value: ");
+    Serial.println(adjustedValue);
+
+    double voltage = adjustedValue * REFERENCE_VOLTAGE / MAX_ADC_VALUE;
+    Serial.print("Voltage: ");
+    Serial.println(voltage);
+
+    if (value > peakValue) peakValue = value;
+    if (value < troughValue) troughValue = value;
+    delay(1);
+  }
+
+  int adjustedPeakValue = peakValue + ADC_OFFSET - VOLTAGE_OFFSET; // Account for error in ADC and noise in CT sensor
+  Serial.print("Peak Value: ");
+  Serial.println(adjustedPeakValue);
+
+  double peakVoltage = adjustedPeakValue * REFERENCE_VOLTAGE / MAX_ADC_VALUE;
+  Serial.print("Peak Voltage: ");
+  Serial.println(peakVoltage);
+
+  int adjustedTroughValue = troughValue + ADC_OFFSET + VOLTAGE_OFFSET; // Account for error in ADC and noise in CT sensor
+  Serial.print("Trough Value: ");
+  Serial.println(adjustedTroughValue);
+
+  double troughVoltage = adjustedTroughValue * REFERENCE_VOLTAGE / MAX_ADC_VALUE;
+  Serial.print("Trough Voltage: ");
+  Serial.println(troughVoltage);
+
+  double peakVoltageAC = (adjustedPeakValue - DC_OFFSET) * REFERENCE_VOLTAGE / MAX_ADC_VALUE;
+  Serial.print("Peak Voltage (AC): ");
+  Serial.println(peakVoltageAC);
+  double current = peakVoltageAC * TRANSFORMATION_RATIO;
+  Serial.print("Current: ");
+  Serial.println(current);
+  double solarPvArrayPower = current * MAINS_VOLTAGE / 1000;
+  Serial.print("Power (kW): ");
+  Serial.println(solarPvArrayPower);
+
   sensors.requestTemperatures();
 
   delay(750);
@@ -88,7 +143,11 @@ void loop() {
     json += "\"" + sensorNames[i] + "\": " + String(tempC) + ",";
   }
 
-  json += "\"flow\": " + String(getFlowRate()) + "}";
+  json += "\"flow\": " + String(getFlowRate()) + ",";
+
+  json += "\"solar_pv_array_power\": " + String(solarPvArrayPower) + ",";
+  json += "\"preheat_tank_power\": " + String(solarPvArrayPower) + ",";
+  json += "\"hybrid_hot_water_tank_power\": " + String(solarPvArrayPower) + "}";
 
   HTTPClient http;
   http.begin(URL + "/data");
