@@ -175,6 +175,7 @@ const fetchLiveTemperatureData = () => {
       document.getElementById("ambient-temperature-value").textContent = data.ambient.toFixed(2);
       document.getElementById("source-temperature-value").textContent = data.source.toFixed(2);
       document.getElementById("hot-temperature-value").textContent = data.hot.toFixed(2);
+      document.getElementById("process-diagram-timestamp").textContent = formatTime(data.timestamp);
     })
     .catch(error => {
       console.error("Error fetching latest sample:", error);

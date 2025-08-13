@@ -126,6 +126,7 @@ const fetchLiveFlowData = () => {
 
       // Process tab
       document.getElementById("hot-flow-value").textContent = data.flow.toFixed(2);
+      document.getElementById("process-diagram-timestamp").textContent = formatTime(data.timestamp);
     })
     .catch(error => {
       console.error("Error fetching latest sample:", error);
