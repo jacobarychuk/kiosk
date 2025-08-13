@@ -20,7 +20,7 @@ body {
   border-radius: 5px;
 }
 
-h1, h2 {
+h1, h2, h3 {
   font-family: Verdana;
   text-align: center;
 }
@@ -35,6 +35,13 @@ h2 {
   color: black;
   margin-top: 0;
   padding-top: 25px;
+}
+
+h3 {
+  font-size: 1.5rem;
+  color: white;
+  margin: 0;
+  padding: 0;
 }
 
 .tabs {

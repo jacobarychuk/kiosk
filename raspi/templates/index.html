@@ -15,6 +15,7 @@
     </header>
     <main>
       <h1>Hybrid Solar Hot Water Monitoring System</h1>
+      <h3>Measured savings since <span id="savings-timestamp">MMM DD, YYYY</span>: $<span id="savings-value"></span></h3>
       <div class="tabs">
         <!-- Tab Labels -->
         <div class="tab-labels">
@@ -1366,6 +1367,8 @@
         updatePanels();
       });
     </script>
+    <script src="/static/extractTimestampComponents.js"></script>
+    <script src="/static/savings.js"></script>
     <script src="/static/temperature.js"></script>
     <script src="/static/flow.js"></script>
     <script src="/static/power.js"></script>

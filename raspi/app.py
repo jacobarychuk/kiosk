@@ -7,6 +7,8 @@ app = Flask(__name__)
 
 API_KEY = os.getenv("API_KEY")
 
+BC_HYDRO_RATE = 0.1398
+
 # Web interface
 @app.route("/")
 def index():
@@ -137,3 +139,17 @@ def power_range():
         data["hybrid_hot_water_tank_power"].append([timestamp_ms, row[9]])
 
     return jsonify(data)
+
+@app.route("/savings")
+def savings():
+    with sqlite3.connect("sensor_data.db", isolation_level=None) as con:
+        cur = con.cursor()
+        cur.execute("SELECT MIN(timestamp) FROM samples")
+        earliest_timestamp = cur.fetchone()[0]
+        total_savings = 999.99
+
+    return jsonify({
+        "total_savings": total_savings,
+        "earliest_timestamp": earliest_timestamp
+    })
+
