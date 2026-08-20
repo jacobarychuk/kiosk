@@ -161,6 +161,56 @@ sudo systemctl enable spca-kiosk-tunnel.service
 sudo systemctl start spca-kiosk-app.service
 sudo systemctl start spca-kiosk-tunnel.service
 ```
-Confirm that both the Flask app and Cloudflare tunnel are running by visiting the hostname
-you chose earlier in any web browser. For example:
-https://spca.sccsa-projects.org/
+Confirm that both the Flask app and Cloudflare tunnel are running by visiting the hostname you chose earlier in any web browser. For example: https://spca.sccsa-projects.org/
+
+# ESP32
+Download the Visual Studio Code desktop app. Open the app and click the Extensions icon on the left sidebar.
+
+<img width="411" height="257" alt="image" src="https://github.com/user-attachments/assets/9d3f6edc-90c7-43fa-b7be-fe9fff456d77" />
+
+Search for 'PlatformIO' and install the 'PlatformIO IDE' extension. If the installation gets stuck, you may need to install Python first.
+
+<img width="411" height="257" alt="image" src="https://github.com/user-attachments/assets/16e4c4aa-b796-4d33-ba4b-7ac700fbf768" />
+
+Clone the repository on your computer. Use the Command Prompt (Windows) or Terminal (macOS) to enter this command:
+```bash
+git clone https://github.com/jacobarychuk/kiosk
+```
+
+If you don’t have Git installed yet, you can download it here: https://git-scm.com/downloads
+
+After installation, click the PlatformIO icon on the left sidebar, then choose 'Pick a folder' and select the `esp32` folder from the repository that you just cloned. Since the repository contains source code for both the Raspberry Pi and ESP32, always make sure you open the `esp32` folder so that PlatformIO recognizes the project properly. It will take a moment for PlatformIO to recognize the project and start installing its dependencies.
+
+<img width="411" height="257" alt="image" src="https://github.com/user-attachments/assets/ad4dab27-4a03-4062-b8d8-c60897af9f79" />
+
+Before loading the program onto the ESP32, you should change the URL that the ESP32 will send data to. Under the `src` dropdown, open the `main.cpp` file and change the constant called `URL` at the top of the file by replacing it with the hostname you used when setting up the Raspberry Pi.
+
+<img width="411" height="257" alt="image" src="https://github.com/user-attachments/assets/57ebf7b7-9893-402d-89ee-d403a727e707" />
+
+Create a file called `secrets.h` in the `include` directory. Click the `include` directory first, then the icon circled below, then type `secrets.h` for the file name.
+
+<img width="411" height="257" alt="image" src="https://github.com/user-attachments/assets/5dc3c417-a2f2-4fde-a140-3d8dfa0b401b" />
+
+Put the following content in the file, replacing the SSID and PASSWORD for the Wi-Fi network you plan to use, and replacing the API key with the one you created when setting up the Raspberry Pi:
+```
+#ifndef SECRETS_H
+#define SECRETS_H
+
+#define SSID "TELUS"
+#define PASSWORD "yourpasswordhere"
+
+#define API_KEY "yourkeyhere"
+#endif
+```
+
+Now you can build the project by clicking the PlatformIO icon on the left sidebar, then clicking the 'Build' button.
+
+<img width="468" height="293" alt="image" src="https://github.com/user-attachments/assets/fc3cbc1a-bf0e-471c-a79b-2f6ec358c712" />
+
+Connect the ESP32 board to your computer and click 'Upload' to copy the build onto the ESP32. If an error occurs, it is likely that your computer is missing the driver to connect to the ESP32.
+
+The driver for Windows can be downloaded here: https://www.silabs.com/documents/public/software/CP210x_Universal_Windows_Driver.zip
+
+There is also a driver available for macOS, but we have not confirmed if this works because macOS usually already has the driver: https://www.silabs.com/documents/public/software/Mac_OSX_VCP_Driver.zip
+
+While the ESP32 is powered, it always runs the loaded program automatically. Note that running 'Upload and Monitor' is helpful for debugging because print statements will show up in the Terminal window.
