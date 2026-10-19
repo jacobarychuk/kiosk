@@ -48,7 +48,9 @@ Come up with an API key or generate one automatically with this command:
 ```bash
 openssl rand -base64 32
 ```
-Copy that key and store it somewhere temporarily. Make a source file to store the API key
+Copy that key and store it somewhere temporarily. 
+
+Make a source file to store the API key
 as an environment variable that we will use later. To create the source file, enter the
 following command:
 ```bash
@@ -93,20 +95,21 @@ Create a configuration file:
 ```bash
 nano ~/.cloudflared/spca-config.yml
 ```
-Copy and paste the following content into the file. Replace `52ac5838-6833-4b0b-93e2-24072f115c6a` with the ID for the tunnel that was created in the previous step, replace `user` with your username, and replace the hostname with the domain that you authenticated in the previous step.
+Copy and paste the following content into the file. Replace `52ac5838-6833-4b0b-93e2-24072f115c6a` with the ID for the tunnel that was created in the previous step, replace `username` with your username, and replace the hostname with the domain that you authenticated in the previous step.
 ```
 tunnel: 52ac5838-6833-4b0b-93e2-24072f115c6a
-credentials-file: /home/user/.cloudflared/52ac5838-6833-4b0b-93e2-24072f115c6a.json
+credentials-file: /home/username/.cloudflared/52ac5838-6833-4b0b-93e2-24072f115c6a.json
 ingress:
   - hostname: spca.sccsa-projects.org
     service: http://localhost:8000
   - service: http_status:404
 ```
+Save and exit the file (`<Control> <X>`, `<Y>`, `<Enter>`).
 
 ### 7. Link tunnel to hostname
 Link the tunnel to the hostname you specified in the configuration file. Replace `spca.sccsa-projects.org` with the hostname you chose in the previous step.
 ```bash
-cloudflared tunnel route dns spca spca.sccsa-projects.org
+cloudflared tunnel route dns spca-kiosk spca.sccsa-projects.org
 ```
 
 ### 8. Create systemd service for Flask app
@@ -114,29 +117,30 @@ While the ESP32 automatically begins executing the loaded program after a power 
 ```bash
 sudo nano /etc/systemd/system/spca-kiosk-app.service
 ```
-Copy and paste the following content into the file (replace `spca` with your site identifier and replace `user` with your username):
+Copy and paste the following content into the file (replace `spca` with your site identifier and replace `username` with your username):
 ```
 [Unit]
 Description=Flask App
 After=network.target
 
 [Service]
-User=user
-WorkingDirectory=/home/user/spca-kiosk/raspi
+User=username
+WorkingDirectory=/home/username/spca-kiosk/raspi
 EnvironmentFile=/etc/default/spca-kiosk-app
-ExecStart=/home/user/spca-kiosk/raspi/venv/bin/gunicorn app:app --bind 127.0.0.1:8000
+ExecStart=/home/username/spca-kiosk/raspi/venv/bin/gunicorn app:app --bind 127.0.0.1:8000
 Restart=always
 
 [Install]
 WantedBy=multi-user.target
 ```
+Save and exit the file (`<Control> <X>`, `<Y>`, `<Enter>`).
 
 ### 9. Create systemd service for Cloudflare tunnel
 Create another systemd service that automatically starts the Cloudflare tunnel:
 ```bash
 sudo nano /etc/systemd/system/spca-kiosk-tunnel.service
 ```
-Copy and paste the following content into the file (replace `spca` with your site identifier and replace `user` with your username):
+Copy and paste the following content into the file (replace `spca` with your site identifier and replace `username` with your username):
 ```
 [Unit]
 Description=Cloudflare Tunnel
@@ -144,13 +148,14 @@ Wants=network-online.target
 After=network-online.target
 
 [Service]
-User=user
-ExecStart=/usr/local/bin/cloudflared --config /home/user/.cloudflared/spca-config.yml tunnel run
+User=username
+ExecStart=/usr/local/bin/cloudflared --config /home/username/.cloudflared/spca-config.yml tunnel run
 Restart=always
 
 [Install]
 WantedBy=multi-user.target
 ```
+Save and exit the file (`<Control> <X>`, `<Y>`, `<Enter>`).
 
 ### 10. Enable and start systemd services
 Enable and start both:
